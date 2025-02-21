@@ -10,7 +10,6 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Conexión a MongoDB usando la URI desde .env
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["yonko_db"]
@@ -20,8 +19,9 @@ users_collection = db["clients"]
 def home():
     return 'Api for the restaurant Yonko'
 
-@app.route('/api/about')
+@app.route('/about')
 def about():
     return 'About'
 
 handle = app
+# app.run()
