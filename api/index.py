@@ -11,8 +11,6 @@ app = Flask(__name__)
 
 CORS(app)
 
-CORS(app, origins="*", methods=["GET", "POST", "OPTIONS"])
-
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["yonko_db"]
