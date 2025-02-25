@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -40,7 +40,6 @@ def login():
 
     # Verificar la contraseña
     if client["password"] == password:
-        session["client"] = username 
         return jsonify({"success": True}), 200
     else:
         return jsonify({"success": False, "message": "Incorrect password"}), 401
