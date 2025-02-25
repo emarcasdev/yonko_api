@@ -8,11 +8,7 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-
-# Permitir CORS solo para tu frontend
-# CORS(app, resources={r"/*": {"origins": "https://restaurante-despliegue.vercel.app"}})
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
-
+CORS(app)
 
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
@@ -61,5 +57,5 @@ def register():
 
 def handler(event, context):
     return app(event, context)
-
+    
 # app.run() # Para ejecutar de manera local el proyecto
