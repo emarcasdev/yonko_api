@@ -13,7 +13,7 @@ CORS(app)
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["yonko_db"]
-users_collection = db["clients"]
+clients_collection = db["clients"]
 
 @app.route('/')
 def home():
@@ -29,20 +29,18 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    if not username or not password:
-        return jsonify({"success": False, "message": "Usuario y contraseña requeridos"}), 400
 
-    user = users_collection.find_one({"username": username})
+    client = clients_collection.find_one({"username": username})
     
-    if not user:
+    if not client:
         return jsonify({"success": False, "message": "Usuario no encontrado"}), 401
 
     # Verificar la contraseña sin encriptación
-    if user["password"] == password:
-        session["user"] = username  # Guardar la sesión del usuario
+    if client["password"] == password:
+        session["client"] = username  # Guardar la sesión del usuario
         return jsonify({"success": True, "message": "Login exitoso"}), 200
     else:
-        return jsonify({"success": False, "message": "Incorrect password"}), 401
+        return jsonify({"success": False, "message": "Incorrect passwor"}), 401
 
 # Ruta para cerrar sesión
 @app.route('/api/logout', methods=["POST"])
