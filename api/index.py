@@ -23,7 +23,7 @@ def home():
 def about():
     return 'About'
 
-@app.route('/login', methods=["POST"])  
+@app.route('/api/login', methods=["POST"])  
 def login():
     data = request.get_json()
     print(data)
