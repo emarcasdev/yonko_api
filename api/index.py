@@ -28,7 +28,7 @@ def login():
     data = request.get_json()
     print(data)
     if not data:
-        return jsonify({"success": False, "message": "No se enviaron datos"}), 400
+        return jsonify({"success": False, "message": "Don`t send the data"}), 400
     
     username = data.get("username")
     password = data.get("password")
@@ -36,12 +36,12 @@ def login():
     client = clients_collection.find_one({"username": username})
     
     if not client:
-        return jsonify({"success": False, "message": "Usuario no encontrado"}), 401
+        return jsonify({"success": False, "message": "User not exits"}), 401
 
     # Verificar la contraseña
     if client["password"] == password:
         session["client"] = username 
-        return jsonify({"success": True, "message": "Login exitoso"}), 200
+        return jsonify({"success": True}), 200
     else:
         return jsonify({"success": False, "message": "Incorrect password"}), 401
 
