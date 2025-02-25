@@ -55,7 +55,8 @@ def logout():
 def register():
     return 'About'
 
-def handler(event, context):
-    return app(event, context)
-    
+handle = app
+
+# def handler(event, context):
+#     return app(event, context)
 # app.run() # Para ejecutar de manera local el proyecto
