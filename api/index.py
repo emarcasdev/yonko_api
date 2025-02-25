@@ -23,7 +23,7 @@ def home():
 def about():
     return 'About'
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["GET"])
 def login():
     data = request.json
     username = data.get("username")
