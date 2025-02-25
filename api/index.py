@@ -11,13 +11,22 @@ app = Flask(__name__)
 
 # Permitir CORS solo para tu frontend
 # CORS(app, resources={r"/*": {"origins": "https://restaurante-despliegue.vercel.app"}})
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "https://restaurante-despliegue.vercel.app"}}, supports_credentials=True)
+
 
 
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["yonko_db"]
 clients_collection = db["clients"]
+
+@app.after_request
+def after_request(response):
+    response.headers.add("Access-Control-Allow-Origin", "https://restaurante-despliegue.vercel.app")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE, PUT")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    return response
 
 @app.route('/')
 def home():
