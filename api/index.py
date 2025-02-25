@@ -23,24 +23,27 @@ def home():
 def about():
     return 'About'
 
-@app.route('/login', methods=["GET"])
+@app.route('/login', methods=["POST"])  
 def login():
-    data = request.json
+    data = request.get_json()  # Nos aseguramos de que obtiene los datos
+    if not data:
+        return jsonify({"success": False, "message": "No se enviaron datos"}), 400
+    
     username = data.get("username")
     password = data.get("password")
-
 
     client = clients_collection.find_one({"username": username})
     
     if not client:
         return jsonify({"success": False, "message": "Usuario no encontrado"}), 401
 
-    # Verificar la contraseña sin encriptación
+    # Verificar la contraseña
     if client["password"] == password:
-        session["client"] = username  # Guardar la sesión del usuario
+        session["client"] = username  # Guardamos la sesión del usuario
         return jsonify({"success": True, "message": "Login exitoso"}), 200
     else:
-        return jsonify({"success": False, "message": "Incorrect passwor"}), 401
+        return jsonify({"success": False, "message": "Incorrect password"}), 401
+
 
 # Ruta para cerrar sesión
 @app.route('/logout', methods=["POST"])
