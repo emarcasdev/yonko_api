@@ -8,7 +8,10 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
+
 CORS(app)
+
+CORS(app, origins="*", methods=["GET", "POST", "OPTIONS"])
 
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
@@ -26,6 +29,8 @@ def about():
 @app.route('/login', methods=["POST"])  
 def login():
     data = request.get_json()  # Nos aseguramos de que obtiene los datos
+      # Nos aseguramos de que obtiene los datos
+    print(data)
     if not data:
         return jsonify({"success": False, "message": "No se enviaron datos"}), 400
     
