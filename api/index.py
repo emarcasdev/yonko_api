@@ -23,7 +23,7 @@ def home():
 def about():
     return 'About'
 
-@app.route('/api/login', methods=["POST"])
+@app.route('/login', methods=["POST"])
 def login():
     data = request.json
     username = data.get("username")
@@ -43,12 +43,12 @@ def login():
         return jsonify({"success": False, "message": "Incorrect passwor"}), 401
 
 # Ruta para cerrar sesión
-@app.route('/api/logout', methods=["POST"])
+@app.route('/logout', methods=["POST"])
 def logout():
     session.pop("user", None)
     return jsonify({"success": True, "message": "Sesión cerrada"}), 200
 
-@app.route('/api/register', methods=["POST"])
+@app.route('/register', methods=["POST"])
 def register():
     return 'About'
 
