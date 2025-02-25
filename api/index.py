@@ -10,7 +10,9 @@ load_dotenv()
 app = Flask(__name__)
 
 # Permitir CORS solo para tu frontend
-CORS(app, resources={r"/*": {"origins": "https://restaurante-despliegue.vercel.app"}})
+# CORS(app, resources={r"/*": {"origins": "https://restaurante-despliegue.vercel.app"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
 
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
@@ -25,8 +27,33 @@ def home():
 def about():
     return 'About'
 
+
 @app.route('/login', methods=["POST"])  
 def login():
+    try:
+        data = request.get_json(force=True)  # <- Asegura que lee JSON correctamente
+    except:
+        return jsonify({"success": False, "message": "Error en el formato JSON"}), 400
+
+    if not data:
+        return jsonify({"success": False, "message": "No se enviaron datos"}), 400
+
+    username = data.get("username")
+    password = data.get("password")
+
+    client = clients_collection.find_one({"username": username})
+
+    if not client:
+        return jsonify({"success": False, "message": "Usuario no encontrado"}), 401
+
+    if client["password"] == password:
+        session["client"] = username  
+        return jsonify({"success": True, "message": "Login exitoso"}), 200
+    else:
+        return jsonify({"success": False, "message": "Contraseña incorrecta"}), 401
+
+# @app.route('/login', methods=["POST"])  
+# def login():
     data = request.get_json()  # Nos aseguramos de que obtiene los datos
     if not data:
         return jsonify({"success": False, "message": "No se enviaron datos"}), 400
