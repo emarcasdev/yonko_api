@@ -26,10 +26,6 @@ def about():
 @app.route('/api/login', methods=["POST"])  
 def login():
     data = request.get_json()
-    print(data)
-    if not data:
-        return jsonify({"success": False, "message": "Don`t send the data"}), 400
-    
     username = data.get("username")
     password = data.get("password")
 
@@ -43,17 +39,34 @@ def login():
         return jsonify({"success": True, "session": username}), 200
     else:
         return jsonify({"success": False, "message": "Incorrect password"}), 401
-
-
-# Cerrar sesión
-@app.route('/logout', methods=["POST"])
-def logout():
-    session.pop("user", None)
-    return jsonify({"success": True, "message": "Sesión cerrada"}), 200
-
-@app.route('/register', methods=["POST"])
+    
+@app.route('/api/register', methods=["POST"])  
 def register():
-    return 'About'
+    data = request.get_json()
+    name = data.get("name")
+    username = data.get("username")
+    password = data.get("password")
+    
+    existUsername = clients_collection.find_one({"username": username})
+    
+    # Verificar si ya hay un usario con ese nombre de usuario
+    if existUsername:
+        return jsonify({"success": False, "message": "This username is already in use"}), 401
+    else:
+        newClient = {
+        "name": name,
+        "username": username,
+        "password": password
+        }
+        
+        addClient = clients_collection.insert_one(newClient)
+        
+        if addClient:
+            return jsonify({"success": True}), 200
+        else:
+            return jsonify({"success": False, "message": "Failed to create new user"}), 401
+    
+
 
 handle = app
 
