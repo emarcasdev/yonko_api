@@ -69,7 +69,7 @@ def register():
             return jsonify({"success": False, "message": "Failed to create new user"}), 401
 
 @app.route('/api/reservation', methods=["POST"])  
-def register():
+def reservation():
     data = request.get_json()
     owner = data.get("owner")
     date = data.get("date")
@@ -94,8 +94,7 @@ def register():
     else:
         return jsonify({"success": False, "message": "Failed to create the reservation"}), 401
     
-
-
+    
 handle = app
 
 # def handler(event, context):
