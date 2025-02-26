@@ -3,6 +3,9 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+# Importamos las funciones de reservas y pedidos
+from reservations import reservation
+from orders import order
 
 # Cargar variables del archivo .env
 load_dotenv()
@@ -68,33 +71,14 @@ def register():
         else:
             return jsonify({"success": False, "message": "Failed to create new user"}), 401
 
-@app.route('/api/reservation', methods=["POST"])  
-def reservation():
-    data = request.get_json()
-    owner = data.get("owner")
-    date = data.get("date")
-    time = data.get("time")
-    name = data.get("name")
-    tlfn = data.get("tlfn")
-    people = data.get("people")
-        
-    newReserve = {
-        "owner": owner,
-        "date": date,
-        "time": time,
-        "name": name,
-        "tlfn": tlfn,
-        "people": people 
-    }
-        
-    addReserve = reserves_collection.insert_one(newReserve)
-        
-    if addReserve:
-        return jsonify({"success": True}), 200
-    else:
-        return jsonify({"success": False, "message": "Failed to create the reservation"}), 401
-    
-    
+@app.route('/api/reservation', methods=["POST"])
+def create_reservation():
+    return reservation(request)
+
+@app.route('/api/order', methods=["POST"])
+def create_order():
+    return order(request)
+      
 handle = app
 
 # def handler(event, context):
