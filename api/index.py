@@ -40,7 +40,7 @@ def login():
 
     # Verificar la contraseña
     if client["password"] == password:
-        return jsonify({"success": True}), 200
+        return jsonify({"success": True, "session": username}), 200
     else:
         return jsonify({"success": False, "message": "Incorrect password"}), 401
 
