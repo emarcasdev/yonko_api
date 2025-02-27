@@ -221,7 +221,7 @@ def decline_reservation():
     data = request.get_json()
     reservation_id = data.get("reservation_id")
 
-    # Eliminar la reserva de la colección
+    # Eliminar la reserva de la coleccións
     delete_result = reserves_collection.delete_one({"_id": ObjectId(reservation_id)})
 
     if delete_result.deleted_count > 0:
