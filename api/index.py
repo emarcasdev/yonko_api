@@ -67,7 +67,6 @@ def register():
             return jsonify({"success": False, "message": "Failed to create new user"}), 401
     
 
-
 handle = app
 
 # def handler(event, context):
