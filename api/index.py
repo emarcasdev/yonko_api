@@ -196,6 +196,38 @@ def orders():
         order["_id"] = str(order["_id"]) # Convertimos a string el objectId
         
     return jsonify({"success": True, "orders": orders}), 200
+
+
+
+#Reservas
+@app.route('/api/reservation/accept', methods=["POST"])
+def accept_reservation():
+    data = request.get_json()
+    reservation_id = data.get("reservation_id")
+
+    update_result = reserves_collection.update_one(
+        {"_id": ObjectId(reservation_id)},
+        {"$set": {"transact": True}}
+    )
+
+    if update_result.modified_count > 0:
+        return jsonify({"success": True, "message": "Reservation accepted"}), 200
+    else:
+        return jsonify({"success": False, "message": "Reservation not found"}), 404
+
+# Rechazar reserva
+@app.route('/api/reservation/decline', methods=["POST"])
+def decline_reservation():
+    data = request.get_json()
+    reservation_id = data.get("reservation_id")
+
+    # Eliminar la reserva de la colección
+    delete_result = reserves_collection.delete_one({"_id": ObjectId(reservation_id)})
+
+    if delete_result.deleted_count > 0:
+        return jsonify({"success": True, "message": "Reservation declined and removed"}), 200
+    else:
+        return jsonify({"success": False, "message": "Reservation not found"}), 404
       
 handle = app
 
