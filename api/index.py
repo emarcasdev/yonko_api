@@ -98,7 +98,11 @@ def reservation():
 
 @app.route('/api/reservations', methods=["GET"])
 def reservations():
-    reservations = list(reserves_collection.find({}, {"_id": 0}))
+    reservations = list(reserves_collection.find({}))
+    
+    for reservation in reservations:
+        reservation["_id"] = str(reservation["_id"]) # Convertimos a string el objectId
+        
     return jsonify({"success": True, "reservations": reservations}), 200
 
 @app.route('/api/order', methods=["POST"])
@@ -126,7 +130,11 @@ def order():
 
 @app.route('/api/orders', methods=["GET"])
 def orders():
-    orders = list(orders_collection.find({}, {"_id": 0}))
+    orders = list(orders_collection.find({}))
+    
+    for order in orders:
+        order["_id"] = str(order["_id"]) # Convertimos a string el objectId
+        
     return jsonify({"success": True, "orders": orders}), 200
       
 handle = app
