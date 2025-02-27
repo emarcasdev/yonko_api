@@ -46,15 +46,20 @@ def send_email(to_email, subject, message):
         print("❌ Error al enviar el correo:", e)
 
 # ✅ Aceptar pedido y enviar correo
+from bson import ObjectId  # Importar para manejar ObjectId
+
 @app.route('/api/order/accept', methods=["POST"])
 def accept_order():
     data = request.get_json()
-    username = data.get("username")
+    order_id = data.get("order_id")
 
-    # Buscar usuario en la base de datos
-    client = clients_collection.find_one({"username": username})
+    order = orders_collection.find_one({"_id": ObjectId(order_id)})
+    if not order:
+        return jsonify({"success": False, "message": "Order not found"}), 404
+
+    client = clients_collection.find_one({"username": order["username"]})
     if not client:
-        return jsonify({"success": False, "message": "User not found"}), 404
+        return jsonify({"success": False, "message": "Client not found"}), 404
 
     email = client.get("email")
     if not email:
@@ -63,7 +68,6 @@ def accept_order():
     # Enviar correo
     subject = "Pedido Aceptado - Yonko Restaurant"
     message = "Tu pedido ha sido aceptado. ¡Gracias por confiar en nosotros! 🍽️"
-
     send_email(email, subject, message)
 
     return jsonify({"success": True, "message": "Order accepted and email sent"}), 200
@@ -72,9 +76,9 @@ def accept_order():
 @app.route('/api/order/decline', methods=["POST"])
 def decline_order():
     data = request.get_json()
-    username = data.get("username")
+    order_id = data.get("order_id")
 
-    delete_result = orders_collection.delete_one({"username": username})
+    delete_result = orders_collection.delete_one({"_id": ObjectId(order_id)})
 
     if delete_result.deleted_count > 0:
         return jsonify({"success": True, "message": "Order declined and removed"}), 200
