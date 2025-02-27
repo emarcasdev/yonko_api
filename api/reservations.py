@@ -25,7 +25,8 @@ def reservation(req):
         "time": time,
         "name": name,
         "tlfn": tlfn,
-        "people": people 
+        "people": people,
+        "transact": False
     }
         
     addReserve = reserves_collection.insert_one(newReserve)
