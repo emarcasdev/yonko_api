@@ -32,7 +32,7 @@ orders_collection = db["orders"]
 # Función para enviar correo
 def send_email():
     sender_email = "yonkorestaurante@gmail.com"
-    sender_password = "Yonko123."  # Usar una Contraseña de Aplicación en vez de la contraseña normal
+    sender_password = "jgvm mtwl frsw cjmr"  # Usar una Contraseña de Aplicación en vez de la contraseña normal
 
     receiver_email = "agusskate34@gmail.com"
     subject = "Pedido Aceptado - Yonko Restaurant"
