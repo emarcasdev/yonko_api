@@ -30,47 +30,33 @@ orders_collection = db["orders"]
 
 
 # Función para enviar correo
-def send_email(to_email, subject, message):
+def send_email():
     sender_email = "yonkorestaurante@gmail.com"
-    sender_password = "Yonko123."  # Mejor usar una "Contraseña de aplicación"
+    sender_password = "Yonko123."  # Usar una Contraseña de Aplicación en vez de la contraseña normal
+
+    receiver_email = "agusskate34@gmail.com"
+    subject = "Pedido Aceptado - Yonko Restaurant"
+    message = "Tu pedido ha sido aceptado. ¡Gracias por confiar en nosotros! 🍽️"
 
     email_text = f"Subject: {subject}\n\n{message}"
 
     try:
+        # Conexión con el servidor SMTP de Gmail
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(sender_email, sender_password)
-        server.sendmail(sender_email, to_email, email_text)
+        server.sendmail(sender_email, receiver_email, email_text)
         server.quit()
         print("📧 Correo enviado correctamente")
     except Exception as e:
         print("❌ Error al enviar el correo:", e)
 
-# ✅ Aceptar pedido y enviar correo
-from bson import ObjectId  # Importar para manejar ObjectId
-
+# Ruta para enviar el correo
 @app.route('/api/order/accept', methods=["POST"])
 def accept_order():
-    data = request.get_json()
-    order_id = data.get("order_id")
-
-    order = orders_collection.find_one({"_id": ObjectId(order_id)})
-    if not order:
-        return jsonify({"success": False, "message": "Order not found"}), 404
-
-    client = clients_collection.find_one({"username": order["username"]})
-    if not client:
-        return jsonify({"success": False, "message": "Client not found"}), 404
-
-    email = client.get("email")
-    if not email:
-        return jsonify({"success": False, "message": "User has no email"}), 400
-
-    # Enviar correo
-    subject = "Pedido Aceptado - Yonko Restaurant"
-    message = "Tu pedido ha sido aceptado. ¡Gracias por confiar en nosotros! 🍽️"
-    send_email(email, subject, message)
-
+    # Llamar a la función para enviar el correo
+    send_email()
+    
     return jsonify({"success": True, "message": "Order accepted and email sent"}), 200
 
 # ❌ Rechazar pedido y eliminarlo
