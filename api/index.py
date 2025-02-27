@@ -51,31 +51,6 @@ def send_email():
     except Exception as e:
         print("❌ Error al enviar el correo:", e)
 
-# Ruta para enviar el correo
-@app.route('/api/order/accept', methods=["POST"])
-def accept_order():
-    # Llamar a la función para enviar el correo
-    send_email()
-    
-    return jsonify({"success": True, "message": "Order accepted and email sent"}), 200
-
-# ❌ Rechazar pedido y eliminarlo
-@app.route('/api/order/decline', methods=["POST"])
-def decline_order():
-    data = request.get_json()
-    order_id = data.get("order_id")
-
-    delete_result = orders_collection.delete_one({"_id": ObjectId(order_id)})
-
-    if delete_result.deleted_count > 0:
-        return jsonify({"success": True, "message": "Order declined and removed"}), 200
-    else:
-        return jsonify({"success": False, "message": "Order not found","id":order_id}), 404
-
-
-
-
-
 
 @app.route('/')
 def home():
@@ -198,18 +173,33 @@ def orders():
     return jsonify({"success": True, "orders": orders}), 200
 
 
+# Ruta para enviar el correo
+@app.route('/api/order/accept', methods=["POST"])
+def accept_order():
+    # Llamar a la función para enviar el correo
+    send_email()
+    
+    return jsonify({"success": True, "message": "Order accepted and email sent"}), 200
+
+# ❌ Rechazar pedido y eliminarlo
+@app.route('/api/order/decline', methods=["POST"])
+def decline_order():
+    data = request.get_json()
+    order_id = data.get("order_id")
+
+    delete_result = orders_collection.delete_one({"_id": ObjectId(order_id)})
+
+    if delete_result.deleted_count > 0:
+        return jsonify({"success": True, "message": "Order declined and removed"}), 200
+    else:
+        return jsonify({"success": False, "message": "Order not found","id":order_id}), 404
+
 
 #Reservas
 @app.route('/api/reservation/accept', methods=["POST"])
 def accept_reservation():
     data = request.get_json()
-    reservation_id = data.get("reservation_id")
-
-    # Verificar si el reservation_id es un ObjectId válido
-    try:
-        reservation_id = ObjectId(reservation_id)
-    except Exception as e:
-        return jsonify({"success": False, "message": "Invalid reservation ID format"}), 400
+    reservation_id = ObjectId(data.get("reservation_id")) 
 
     # Actualizar la reserva para marcarla como aceptada (transact: True)
     update_result = reserves_collection.update_one(
@@ -228,9 +218,9 @@ def accept_reservation():
 @app.route('/api/reservation/decline', methods=["POST"])
 def decline_reservation():
     data = request.get_json()
-    reserves_id = data.get("reservation_id")
+    reservation_id = ObjectId(data.get("reservation_id"))
 
-    delete_result = reserves_collection.delete_one({"_id": ObjectId(reserves_id)})
+    delete_result = reserves_collection.delete_one({"_id": reservation_id})
 
     if delete_result.deleted_count > 0:
         return jsonify({"success": True, "message": "Order declined and removed"}), 200
