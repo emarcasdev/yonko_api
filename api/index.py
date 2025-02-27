@@ -83,7 +83,7 @@ def decline_order():
     if delete_result.deleted_count > 0:
         return jsonify({"success": True, "message": "Order declined and removed"}), 200
     else:
-        return jsonify({"success": False, "message": "Order not found"}), 404
+        return jsonify({"success": False, "message": "Order not found","id":order_id}), 404
 
 
 
