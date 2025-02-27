@@ -205,26 +205,21 @@ def accept_reservation():
     data = request.get_json()
     reservation_id = data.get("reservation_id")
 
-    # Verificar que el ID de la reserva no esté vacío
-    if not reservation_id:
-        return jsonify({"success": False, "message": "No reservation ID provided"}), 400
-
+    # Verificar si el reservation_id es un ObjectId válido
     try:
-        # Intentar actualizar la reserva
-        update_result = reserves_collection.update_one(
-            {"_id": ObjectId(reservation_id)},
-            {"$set": {"transact": True}}
-        )
-
-        if update_result.modified_count > 0:
-            return jsonify({"success": True, "message": "Reservation accepted"}), 200
-        else:
-            return jsonify({"success": False, "message": "Reservation not found"}), 404
-
+        reservation_id = ObjectId(reservation_id)
     except Exception as e:
-        # Imprimir más detalles del error en los logs
-        print(f"Error while accepting reservation: {str(e)}")
-        return jsonify({"success": False, "message": "Error processing the request"}), 500
+        return jsonify({"success": False, "message": "Invalid reservation ID format"}), 400
+
+    update_result = reserves_collection.update_one(
+        {"_id": reservation_id},
+        {"$set": {"transact": True}}
+    )
+
+    if update_result.modified_count > 0:
+        return jsonify({"success": True, "message": "Reservation accepted"}), 200
+    else:
+        return jsonify({"success": False, "message": "Reservation not found"}), 404
 
 
 # Rechazar reserva
