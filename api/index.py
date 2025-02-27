@@ -4,6 +4,12 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 
+
+
+import smtplib
+
+
+
 # Cargar variables del archivo .env
 load_dotenv()
 
@@ -16,6 +22,69 @@ db = client["yonko_db"]
 clients_collection = db["clients"]
 reserves_collection = db["reservations"]
 orders_collection = db["orders"]
+
+
+
+
+
+
+# Función para enviar correo
+def send_email(to_email, subject, message):
+    sender_email = "yonkorestaurante@gmail.com"
+    sender_password = "Yonko123."  # Mejor usar una "Contraseña de aplicación"
+
+    email_text = f"Subject: {subject}\n\n{message}"
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, to_email, email_text)
+        server.quit()
+        print("📧 Correo enviado correctamente")
+    except Exception as e:
+        print("❌ Error al enviar el correo:", e)
+
+# ✅ Aceptar pedido y enviar correo
+@app.route('/api/order/accept', methods=["POST"])
+def accept_order():
+    data = request.get_json()
+    username = data.get("username")
+
+    # Buscar usuario en la base de datos
+    client = clients_collection.find_one({"username": username})
+    if not client:
+        return jsonify({"success": False, "message": "User not found"}), 404
+
+    email = client.get("email")
+    if not email:
+        return jsonify({"success": False, "message": "User has no email"}), 400
+
+    # Enviar correo
+    subject = "Pedido Aceptado - Yonko Restaurant"
+    message = "Tu pedido ha sido aceptado. ¡Gracias por confiar en nosotros! 🍽️"
+
+    send_email(email, subject, message)
+
+    return jsonify({"success": True, "message": "Order accepted and email sent"}), 200
+
+# ❌ Rechazar pedido y eliminarlo
+@app.route('/api/order/decline', methods=["POST"])
+def decline_order():
+    data = request.get_json()
+    username = data.get("username")
+
+    delete_result = orders_collection.delete_one({"username": username})
+
+    if delete_result.deleted_count > 0:
+        return jsonify({"success": True, "message": "Order declined and removed"}), 200
+    else:
+        return jsonify({"success": False, "message": "Order not found"}), 404
+
+
+
+
+
 
 @app.route('/')
 def home():
