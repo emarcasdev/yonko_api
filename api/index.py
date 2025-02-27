@@ -211,11 +211,13 @@ def accept_reservation():
     except Exception as e:
         return jsonify({"success": False, "message": "Invalid reservation ID format"}), 400
 
+    # Actualizar la reserva para marcarla como aceptada (transact: True)
     update_result = reserves_collection.update_one(
         {"_id": reservation_id},
         {"$set": {"transact": True}}
     )
 
+    # Verificar si la reserva fue actualizada correctamente
     if update_result.modified_count > 0:
         return jsonify({"success": True, "message": "Reservation accepted"}), 200
     else:
@@ -228,9 +230,16 @@ def decline_reservation():
     data = request.get_json()
     reservation_id = data.get("reservation_id")
 
-    # Eliminar la reserva de la coleccións
-    delete_result = reserves_collection.delete_one({"_id": ObjectId(reservation_id)})
+    # Verificar si el reservation_id es un ObjectId válido
+    try:
+        reservation_id = ObjectId(reservation_id)
+    except Exception as e:
+        return jsonify({"success": False, "message": "Invalid reservation ID format"}), 400
 
+    # Eliminar la reserva de la colección
+    delete_result = reserves_collection.delete_one({"_id": reservation_id})
+
+    # Verificar si la reserva fue eliminada correctamente
     if delete_result.deleted_count > 0:
         return jsonify({"success": True, "message": "Reservation declined and removed"}), 200
     else:
