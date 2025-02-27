@@ -99,7 +99,7 @@ def reservation():
 @app.route('/api/reservations', methods=["GET"])
 def reservations():
     reservations = list(reserves_collection.find({}, {"_id": 0}))
-    return jsonify(reservations), 200
+    return jsonify({"success": True, "reservations": reservations}), 200
 
 @app.route('/api/order', methods=["POST"])
 def order():
@@ -127,7 +127,7 @@ def order():
 @app.route('/api/orders', methods=["GET"])
 def orders():
     orders = list(orders_collection.find({}, {"_id": 0}))
-    return jsonify(orders), 200
+    return jsonify({"success": True, "orders": orders}), 200
       
 handle = app
 
