@@ -224,26 +224,18 @@ def accept_reservation():
         return jsonify({"success": False, "message": "Reservation not found"}), 404
 
 
-# Rechazar reserva
+# ❌ Rechazar pedido y eliminarlo
 @app.route('/api/reservation/decline', methods=["POST"])
 def decline_reservation():
     data = request.get_json()
-    reservation_id = data.get("reservation_id")
+    reserves_id = data.get("reservation_id")
 
-    # Verificar si el reservation_id es un ObjectId válido
-    try:
-        reservation_id = ObjectId(reservation_id)
-    except Exception as e:
-        return jsonify({"success": False, "message": "Invalid reservation ID format"}), 400
+    delete_result = reserves_collection.delete_one({"_id": ObjectId(reserves_id)})
 
-    # Eliminar la reserva de la colección
-    delete_result = reserves_collection.delete_one({"_id": reservation_id})
-
-    # Verificar si la reserva fue eliminada correctamente
     if delete_result.deleted_count > 0:
-        return jsonify({"success": True, "message": "Reservation declined and removed"}), 200
+        return jsonify({"success": True, "message": "Order declined and removed"}), 200
     else:
-        return jsonify({"success": False, "message": "Reservation not found"}), 404
+        return jsonify({"success": False, "message": "Order not found","id":reserves_id}), 404
       
 handle = app
 
