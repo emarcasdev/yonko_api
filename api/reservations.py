@@ -35,3 +35,7 @@ def reservation(req):
         return jsonify({"success": True}), 200
     else:
         return jsonify({"success": False, "message": "Failed to create the reservation"}), 401
+    
+def get_reservations():
+    reservations = list(reserves_collection.find({}, {"_id": 0}))
+    return jsonify(reservations), 200

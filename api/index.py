@@ -4,8 +4,8 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 # Importamos las funciones de reservas y pedidos
-from reservations import reservation
-from orders import order
+from reservations import reservation, get_reservations
+from orders import order, get_orders
 
 # Cargar variables del archivo .env
 load_dotenv()
@@ -18,7 +18,7 @@ client = MongoClient(MONGO_URI)
 db = client["yonko_db"]
 clients_collection = db["clients"]
 reserves_collection = db["reservations"]
-
+orders_collection = db["orders"]
 
 @app.route('/')
 def home():
@@ -75,9 +75,17 @@ def register():
 def create_reservation():
     return reservation(request)
 
+@app.route('/api/reservations', methods=["GET"])
+def get_all_reservations():
+    return get_reservations()
+
 @app.route('/api/order', methods=["POST"])
 def create_order():
     return order(request)
+
+@app.route('/api/orders', methods=["GET"])
+def get_all_orders():
+    return get_orders()
       
 handle = app
 
