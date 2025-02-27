@@ -3,6 +3,9 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+# Importamos las funciones de reservas y pedidos
+from reservations import reservation, get_reservations
+from orders import order, get_orders
 
 # Cargar variables del archivo .env
 load_dotenv()
@@ -14,6 +17,8 @@ MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["yonko_db"]
 clients_collection = db["clients"]
+reserves_collection = db["reservations"]
+orders_collection = db["orders"]
 
 @app.route('/')
 def home():
@@ -43,7 +48,7 @@ def login():
 @app.route('/api/register', methods=["POST"])  
 def register():
     data = request.get_json()
-    name = data.get("name")
+    email = data.get("email")
     username = data.get("username")
     password = data.get("password")
     
@@ -54,7 +59,7 @@ def register():
         return jsonify({"success": False, "message": "This username is already in use"}), 401
     else:
         newClient = {
-        "name": name,
+        "email": email,
         "username": username,
         "password": password
         }
@@ -65,8 +70,23 @@ def register():
             return jsonify({"success": True}), 200
         else:
             return jsonify({"success": False, "message": "Failed to create new user"}), 401
-    
 
+@app.route('/api/reservation', methods=["POST"])
+def create_reservation():
+    return reservation(request)
+
+@app.route('/api/reservations', methods=["GET"])
+def get_all_reservations():
+    return get_reservations()
+
+@app.route('/api/order', methods=["POST"])
+def create_order():
+    return order(request)
+
+@app.route('/api/orders', methods=["GET"])
+def get_all_orders():
+    return get_orders()
+      
 handle = app
 
 # def handler(event, context):
