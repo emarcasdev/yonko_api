@@ -48,7 +48,7 @@ def login():
 @app.route('/api/register', methods=["POST"])  
 def register():
     data = request.get_json()
-    name = data.get("name")
+    email = data.get("email")
     username = data.get("username")
     password = data.get("password")
     
@@ -59,7 +59,7 @@ def register():
         return jsonify({"success": False, "message": "This username is already in use"}), 401
     else:
         newClient = {
-        "name": name,
+        "email": email,
         "username": username,
         "password": password
         }
