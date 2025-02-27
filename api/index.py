@@ -3,9 +3,6 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
-# Importamos las funciones de reservas y pedidos
-from reservations import reservation, get_reservations
-from orders import order, get_orders
 
 # Cargar variables del archivo .env
 load_dotenv()
@@ -72,20 +69,65 @@ def register():
             return jsonify({"success": False, "message": "Failed to create new user"}), 401
 
 @app.route('/api/reservation', methods=["POST"])
-def create_reservation():
-    return reservation(request)
+def reservation():
+    data = request.get_json()
+
+    owner = data.get("owner")
+    date = data.get("date")
+    time = data.get("time")
+    name = data.get("name")
+    tlfn = data.get("tlfn")
+    people = data.get("people")
+        
+    newReserve = {
+        "owner": owner,
+        "date": date,
+        "time": time,
+        "name": name,
+        "tlfn": tlfn,
+        "people": people,
+        "transact": False
+    }
+        
+    addReserve = reserves_collection.insert_one(newReserve)
+        
+    if addReserve:
+        return jsonify({"success": True}), 200
+    else:
+        return jsonify({"success": False, "message": "Failed to create the reservation"}), 401
 
 @app.route('/api/reservations', methods=["GET"])
-def get_all_reservations():
-    return get_reservations()
+def reservations():
+    reservations = list(reserves_collection.find({}, {"_id": 0}))
+    return jsonify(reservations), 200
 
 @app.route('/api/order', methods=["POST"])
-def create_order():
-    return order(request)
+def order():
+    data = request.get_json()
+
+    username = data.get("username")
+    products = data.get("products")
+    total = data.get("total")
+
+        
+    new_order = {
+        "username": username,
+        "products": products,
+        "total": total,
+        "transact": False  #estado del pedido
+    }
+        
+    addOrder = orders_collection.insert_one(new_order)
+        
+    if addOrder:
+        return jsonify({"success": True}), 200
+    else:
+        return jsonify({"success": False, "message": "Failed to create the orders"}), 401
 
 @app.route('/api/orders', methods=["GET"])
-def get_all_orders():
-    return get_orders()
+def orders():
+    orders = list(orders_collection.find({}, {"_id": 0}))
+    return jsonify(orders), 200
       
 handle = app
 
