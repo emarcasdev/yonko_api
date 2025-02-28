@@ -232,7 +232,7 @@ def decline_reservation():
     except Exception as e:
         return jsonify({"success": False, "message": f"Error converting reservation id: {e}"}), 500
 
-    delete_result = reserves_collection.delete_one({"id": reservation_objid})
+    delete_result = reserves_collection.delete_one({"_id": reservation_objid})
 
     if delete_result.deleted_count > 0:
         return jsonify({"success": True, "message": "Reservation declined and removed"}), 200
