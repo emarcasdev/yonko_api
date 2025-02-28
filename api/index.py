@@ -88,7 +88,7 @@ def reservation():
         "tlfn": tlfn,
         "people": people,
         "transact": False, 
-        "status": ""
+        "status": "En espera"
     }
         
     addReserve = reserves_collection.insert_one(newReserve)
@@ -119,7 +119,7 @@ def order():
         "products": products,
         "total": total,
         "transact": False,  #estado del pedido
-        "status": ""
+        "status": "En espera"
     }
         
     addOrder = orders_collection.insert_one(new_order)
