@@ -223,16 +223,16 @@ def decline_reservation():
     data = request.get_json()
     reservation_id = data.get("reservation_id")
 
-    # Validar que el reservation_id exista y tenga formato válido
-    if not reservation_id or not ObjectId.is_valid(reservation_id):
-        return jsonify({"success": False, "message": "Invalid reservation id format"}), 400
+    # # Validar que el reservation_id exista y tenga formato válido
+    # if not reservation_id or not ObjectId.is_valid(reservation_id):
+    #     return jsonify({"success": False, "message": "Invalid reservation id format"}), 400
 
-    try:
-        reservation_objid = ObjectId(reservation_id)
-    except Exception as e:
-        return jsonify({"success": False, "message": f"Error converting reservation id: {e}"}), 500
+    # try:
+    #     reservation_objid = ObjectId(reservation_id)
+    # except Exception as e:
+    #     return jsonify({"success": False, "message": f"Error converting reservation id: {e}"}), 500
 
-    delete_result = reserves_collection.delete_one({"id": "1"})
+    delete_result = reserves_collection.delete_one({"id": reservation_objid})
 
     if delete_result.deleted_count > 0:
         return jsonify({"success": True, "message": "Reservation declined and removed"}), 200
