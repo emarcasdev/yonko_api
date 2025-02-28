@@ -197,31 +197,48 @@ def accept_reservation():
     data = request.get_json()
     reservation_id = data.get("reservation_id")
 
+    # Validar que el reservation_id exista y tenga formato válido
+    if not reservation_id or not ObjectId.is_valid(reservation_id):
+        return jsonify({"success": False, "message": "Invalid reservation id format"}), 400
+
+    try:
+        reservation_objid = ObjectId(reservation_id)
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error converting reservation id: {e}"}), 500
+
     # Actualizar la reserva para marcarla como aceptada (transact: True)
     update_result = reserves_collection.update_one(
-        {"_id": ObjectId(reservation_id)},
+        {"_id": reservation_objid},
         {"$set": {"transact": True}}
     )
 
-    # Verificar si la reserva fue actualizada correctamente
     if update_result.modified_count > 0:
         return jsonify({"success": True, "message": "Reservation accepted"}), 200
     else:
         return jsonify({"success": False, "message": "Reservation not found"}), 404
 
 
-# ❌ Rechazar pedido y eliminarlo
 @app.route('/api/reservation/decline', methods=["POST"])
 def decline_reservation():
     data = request.get_json()
     reservation_id = data.get("reservation_id")
 
-    delete_result = reserves_collection.delete_one({"_id": ObjectId(reservation_id)})
+    # Validar que el reservation_id exista y tenga formato válido
+    if not reservation_id or not ObjectId.is_valid(reservation_id):
+        return jsonify({"success": False, "message": "Invalid reservation id format"}), 400
+
+    try:
+        reservation_objid = ObjectId(reservation_id)
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error converting reservation id: {e}"}), 500
+
+    delete_result = reserves_collection.delete_one({"_id": reservation_objid})
 
     if delete_result.deleted_count > 0:
-        return jsonify({"success": True, "message": "Order declined and removed"}), 200
+        return jsonify({"success": True, "message": "Reservation declined and removed"}), 200
     else:
-        return jsonify({"success": False, "message": "Order not found","id": reservation_id}), 404
+        return jsonify({"success": False, "message": "Reservation not found", "id": reservation_id}), 404
+
       
 handle = app
 
