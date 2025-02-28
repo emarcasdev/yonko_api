@@ -199,11 +199,11 @@ def decline_order():
 @app.route('/api/reservation/accept', methods=["POST"])
 def accept_reservation():
     data = request.get_json()
-    reservation_id = ObjectId(data.get("reservation_id")) 
+    reservation_id = data.get("reservation_id")
 
     # Actualizar la reserva para marcarla como aceptada (transact: True)
     update_result = reserves_collection.update_one(
-        {"_id": reservation_id},
+        {"_id": ObjectId(reservation_id)},
         {"$set": {"transact": True}}
     )
 
@@ -218,14 +218,14 @@ def accept_reservation():
 @app.route('/api/reservation/decline', methods=["POST"])
 def decline_reservation():
     data = request.get_json()
-    reservation_id = ObjectId(data.get("reservation_id"))
+    reservation_id = data.get("reservation_id")
 
-    delete_result = reserves_collection.delete_one({"_id": reservation_id})
+    delete_result = reserves_collection.delete_one({"_id": ObjectId(reservation_id)})
 
     if delete_result.deleted_count > 0:
         return jsonify({"success": True, "message": "Order declined and removed"}), 200
     else:
-        return jsonify({"success": False, "message": "Order not found","id":reserves_id}), 404
+        return jsonify({"success": False, "message": "Order not found","id": reservation_id}), 404
       
 handle = app
 
