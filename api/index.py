@@ -141,7 +141,7 @@ def orders():
 def accept_order():
     data = request.get_json()
     order_id = data.get("order_id")
-
+    print(order_id)
     if not order_id or not ObjectId.is_valid(order_id):
         return jsonify({"success": False, "message": "Invalid order id format"}), 400
 
