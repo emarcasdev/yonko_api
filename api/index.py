@@ -141,7 +141,6 @@ def orders():
 def accept_order():
     data = request.get_json()
     order_id = data.get("order_id")
-    print(order_id)
     if not order_id or not ObjectId.is_valid(order_id):
         return jsonify({"success": False, "message": "Invalid order id format"}), 400
 
@@ -151,7 +150,6 @@ def accept_order():
             {"_id": order_objid},
             {"$set": {"status": "accept", "transact": True}}
         )
-        send_email()  # Llamar a la función para enviar el correo
     except Exception as e:
         return jsonify({"success": False, "message": f"Error updating order: {e}"}), 500
 
