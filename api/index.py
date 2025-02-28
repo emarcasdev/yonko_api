@@ -220,8 +220,8 @@ def accept_reservation():
 
 @app.route('/api/reservation/decline', methods=["POST"])
 def decline_reservation():
-    data = request.get_json()
-    reservation_id = data.get("reservation_id")
+    # data = request.get_json()
+    # reservation_id = data.get("reservation_id")
 
     # # Validar que el reservation_id exista y tenga formato válido
     # if not reservation_id or not ObjectId.is_valid(reservation_id):
